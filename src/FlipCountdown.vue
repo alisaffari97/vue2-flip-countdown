@@ -1,12 +1,29 @@
 <template>
   <div class="container flip-clock">
-    <template v-for="data in timeData" v-show="show">
-      <span v-bind:key="data.label" class="flip-clock__piece" :id="data.elementId" v-show="data.show">
+    <template
+      v-for="data in timeData"
+      v-show="show"
+    >
+      <span
+        v-bind:key="data.label"
+        class="flip-clock__piece"
+        :id="data.elementId"
+        v-show="data.show"
+      >
         <span class="flip-clock__card flip-card">
           <b class="flip-card__top">{{ data.current | twoDigits }}</b>
-          <b class="flip-card__bottom" v-bind:data-value="data.current | twoDigits"></b>
-          <b class="flip-card__back" v-bind:data-value="data.previous | twoDigits"></b>
-          <b class="flip-card__back-bottom" v-bind:data-value="data.previous | twoDigits"></b>
+          <b
+            class="flip-card__bottom"
+            v-bind:data-value="data.current | twoDigits"
+          ></b>
+          <b
+            class="flip-card__back"
+            v-bind:data-value="data.previous | twoDigits"
+          ></b>
+          <b
+            class="flip-card__back-bottom"
+            v-bind:data-value="data.previous | twoDigits"
+          ></b>
         </span>
         <span class="flip-clock__slot">{{ data.label }}</span>
       </span>
@@ -50,17 +67,17 @@ export default {
     labels: {
       type: Object,
       required: false,
-      default: function() {
+      default: function () {
         return {
-          days: 'Days',
-          hours: 'Hours',
-          minutes: 'Minutes',
-          seconds: 'Seconds',
+          days: 'روز',
+          hours: 'ساعت',
+          minutes: 'دقیقه',
+          seconds: 'ثانیه',
         };
       },
     },
   },
-  data() {
+  data () {
     const uuid = uuidv4();
     return {
       now: Math.trunc(new Date().getTime() / 1000),
@@ -100,7 +117,7 @@ export default {
       ],
     };
   },
-  created() {
+  created () {
     if (!this.deadline) {
       throw new Error("Missing props 'deadline'");
     }
@@ -113,34 +130,34 @@ export default {
       this.now = Math.trunc(new Date().getTime() / 1000);
     }, 1000);
   },
-  mounted() {
+  mounted () {
     if (this.diff !== 0) {
       this.show = true;
     }
   },
   computed: {
-    seconds() {
+    seconds () {
       return Math.trunc(this.diff) % 60;
     },
-    minutes() {
+    minutes () {
       return Math.trunc(this.diff / 60) % 60;
     },
-    hours() {
+    hours () {
       return Math.trunc(this.diff / 60 / 60) % 24;
     },
-    days() {
+    days () {
       return Math.trunc(this.diff / 60 / 60 / 24);
     },
   },
   watch: {
-    deadline: function(newVal, oldVal) {
+    deadline: function (newVal, oldVal) {
       const endTime = this.deadline;
       this.date = Math.trunc(Date.parse(endTime.replace(/-/g, '/')) / 1000);
       if (!this.date) {
         throw new Error("Invalid props value, correct the 'deadline'");
       }
     },
-    now(value) {
+    now (value) {
       this.diff = this.date - this.now;
       if (this.diff <= 0 || this.stop) {
         this.diff = 0;
@@ -149,7 +166,7 @@ export default {
         this.updateAllCards();
       }
     },
-    diff(value) {
+    diff (value) {
       if (value === 0) {
         this.$emit('timeElapsed');
         this.updateAllCards();
@@ -157,7 +174,7 @@ export default {
     },
   },
   filters: {
-    twoDigits(value) {
+    twoDigits (value) {
       if (value.toString().length <= 1) {
         return '0' + value.toString();
       }
@@ -165,13 +182,13 @@ export default {
     },
   },
   methods: {
-    updateAllCards() {
+    updateAllCards () {
       this.updateTime(0, this.days);
       this.updateTime(1, this.hours);
       this.updateTime(2, this.minutes);
       this.updateTime(3, this.seconds);
     },
-    updateTime(idx, newValue) {
+    updateTime (idx, newValue) {
       if (idx >= this.timeData.length || newValue === undefined) {
         return;
       }
@@ -218,12 +235,12 @@ export default {
       }
     },
   },
-  beforeDestroy() {
+  beforeDestroy () {
     if (window['cancelAnimationFrame']) {
       cancelAnimationFrame(this.frame);
     }
   },
-  destroyed() {
+  destroyed () {
     clearInterval(interval);
   },
 };
